@@ -1,0 +1,11 @@
+{
+  "type": "service_account",
+  "private_key_id": "ef769f001aed0bde9da47c5b74d20b6abc95f231",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCxXXtwQiazgLyo\nIbbiaeiBpwHd4YiD0hOWh3ixHt6THkKr1RxLP3cx3zZJ2cM8ltcpVhumh/97TFYp\nj1xMVTUTGfdcvX4qQsOA1Pw2PlJoMzlGfAnsfckJs747PuDGXwyL/yl5vsbKzLxx\n3yAJ8E9XZfvpUdVTvUsPtE/TPV0xN+2wTaZvgRm91yKdOVUkumaESxYTkhAPPnbP\n3OQQPQi7MknqMMGSFOgTTq8L8YUX8xxwRRaRcmdUUNyfvGuvce8opZzza97J33f3\nN0c79YkduFUppPbq3Q4wCaLCrC6donoBltY65bN3ulbcrdMD9jQ7OWAtiRZR28L+\n6wBGgOsPAgMBAAECggEAQGyhUrRklF0VqcidQn6PutBr6Clsydz7ynioyUVaOXwL\nYZkGLvr9k7rtYEPeG9r6ioRBhOrvTNz8ixoMv5lPrwGGjUQzWKxpkRlMB3P5wOmi\nS0zw2dsStBh659A+GzAZQZzMdvFqCe32ITKX06RbXXao2yYjY8hlRG4NdMBcYmy/\nYDXBM1yXE1KugARj7vmiR0eSP3TzA711lhaKBhOXIQkDR/2y6UgOzR52ubaJZQ9s\nOkrkrLhwDF4olfxE1OxjUowmle7bdNFzzvB2MVTP3YROBvEGOGJ5YTVeutBW9qdj\nlz/iqWFvDDJOVDzx7WUY0zAedmvjCc6wKNSz0ZYokQKBgQDv7zUazI5zbkFkpkDn\n7FhkrO1Thi2q+HORF4NdoJtVOofpebrgOoE9sG8QG4fyWoKkSWQP4n5sUpIyl5y3\npF+eW+dGEJL8NK7zVcZU3vCy/uQVPv3wI5vMO5oS+Eaj84B2F4fSWPVR5dCJH9rz\n5f1kx/iQGAktpMy0xNughlNO+QKBgQC9PcFeZ1yohvMJB/wHn3RJTYXFJMvVPEwt\nzzCgVf+HKu7KYJk1VNW6DY8QYbFSsXjX+TSNmNduVdQTc7r43fd7TOp2OPX4eIJs\nxiGPGFJvevUIbFA6lkCEpOFMD0aKRwqUYJLnWWeVyOqaxLFWssk+K7fHHrvN0NGm\nfNra5GMkRwKBgD4bKR/auzTd4UdwUXS3FNpaeMQaA1AyJ5fzAioGHK8fC3c/70OD\nYVjahqUguzvcedyUsrX55sebSASYghR3E9kl6OOV/rYR3QdXuJLXcm6i0988Avda\nAEYJV4R5h6+ApEvtI1crd7TPS/9yo3ZmngSsTobd8eJCukpAeqk+m+nhAoGAS0i+\nHKhSHFlTZkxe30l4IZFNnlg9Ht+WDsNWPPL5bPSPesNjL+xH+nRabdHvkU45HPJv\nDcW4LpTGgdaQk2D6i3rV66JNeEO43z0TLLIoWWE5CdjNMgGEOUC+wFtzXJ9WfiDN\nUGwo4VXEvz1wr2UA2lLaEcUQQZjJTsps5pflORECgYAxxCsts5QlC5M2fnHOy9tY\nxVtJUmnGDH+FTffdA2L6CSvIzWtfES2oJOWBj2YqugrIlNAkSz5Itlcv1Xrup5E+\nHIARgg00gD65Np6ishmLkARF+FOcw3Xly0NTv/p1KJ9oKOUxqhUrsul1kn+Q4UMW\n5BiaPA1tPcT0Mc71XOJhNw==\n-----END PRIVATE KEY-----\n",
+  "client_email": "account-1@mo-money-mo-problems.iam.gserviceaccount.com",
+  "client_id": "109407739625147551391",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://accounts.google.com/o/oauth2/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/account-1%40mo-money-mo-problems.iam.gserviceaccount.com"
+}
