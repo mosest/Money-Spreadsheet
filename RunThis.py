@@ -55,9 +55,9 @@ def isNewRow(occasionData):
         jacobOwes = 0
         
     if len(occasionData) >= 5:
-        devanOwes = occasionData[4]
+        lucasOwes = occasionData[4]
     else:
-        devanOwes = 0
+        lucasOwes = 0
         
     if len(occasionData) >= 6:
         williamOwes = occasionData[5]
@@ -75,8 +75,8 @@ def isNewRow(occasionData):
         if occasionInNameSheet("Jacob", occasion, date):
             return False
 
-    if float(devanOwes) > 0:
-        if occasionInNameSheet("Devan", occasion, date):
+    if float(lucasOwes) > 0:
+        if occasionInNameSheet("Lucas", occasion, date):
             return False
 
     if float(williamOwes) > 0:
@@ -119,9 +119,9 @@ def addRow(occasionData):
         jacobOwes = 0
         
     if len(occasionData) >= 5:
-        devanOwes = occasionData[4]
+        lucasOwes = occasionData[4]
     else:
-        devanOwes = 0
+        lucasOwes = 0
         
     if len(occasionData) >= 6:
         williamOwes = occasionData[5]
@@ -140,8 +140,8 @@ def addRow(occasionData):
     if float(jacobOwes) > 0:
         editNameSheet("Jacob", jacobOwes, occasion, date, whoPaid)
         
-    if float(devanOwes) > 0:
-        editNameSheet("Devan", devanOwes, occasion, date, whoPaid)       
+    if float(lucasOwes) > 0:
+        editNameSheet("Lucas", lucasOwes, occasion, date, whoPaid)       
         
     if float(williamOwes) > 0:
         editNameSheet("William", williamOwes, occasion, date, whoPaid)
@@ -153,7 +153,7 @@ def addRow(occasionData):
 
 # variables
 
-names = ["Jacob","Devan","William","Tara"]
+names = ["Jacob","Lucas","William","Tara"]
 
 choice      = 1
 again       = "y"
@@ -163,7 +163,7 @@ date        = ""
 whoPaid     = ""
 
 jacobOwes   = 0
-devanOwes   = 0
+lucasOwes   = 0
 williamOwes = 0
 taraOwes    = 0
 
@@ -187,7 +187,7 @@ wholeBook        = gc.open("Mo' Money, Mo' Problems")
 totalsSheet      = wholeBook.worksheet("Totals")
 occasionsSheet   = wholeBook.worksheet("Occasions")
 jacobSheet       = wholeBook.worksheet("Jacob")
-devanSheet       = wholeBook.worksheet("Devan")
+lucasSheet       = wholeBook.worksheet("Lucas")
 williamSheet     = wholeBook.worksheet("William")
 taraSheet        = wholeBook.worksheet("Tara")
 
@@ -235,8 +235,8 @@ if choice == "1":
         if whoPaid != "Jacob":
             jacobOwes   = input("Jacob owes: $")
             
-        if whoPaid != "Devan":
-            devanOwes   = input("Devan owes: $")
+        if whoPaid != "Lucas":
+            lucasOwes   = input("Lucas owes: $")
             
         if whoPaid != "William":
             williamOwes = input("William owes: $")
@@ -248,7 +248,7 @@ if choice == "1":
 
         currentRow = [occasion,     date,
                       whoPaid,      jacobOwes,
-                      devanOwes,    williamOwes,
+                      lucasOwes,    williamOwes,
                       taraOwes]
 
         occasionsSheet.insert_row(currentRow, occasionsSheet.row_count + 1)
