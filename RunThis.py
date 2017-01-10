@@ -1,155 +1,101 @@
+# +-----------------------------------------------------+
+# | === MONEY-SPREADSHEET UPDATER: AS OF 01/09/2017 === |
+# | =================== Tara Moses ==================== |
+# |                                                     |
+# | Updates the spreadsheet on Google Drive called "Mo' |
+# | Money, Mo' Problems," which tracks money owed b/t   |
+# | the four of us who live at Fair Park.               |
+# |                                                     |
+# | Here I will explain how the spreadsheet works!      |
+# |                                                     |
+# | There are six pages: Totals, Occasions, and a debt  |
+# | page for each person.                               |
+# |                                                     |
+# | The Totals page shows the total money owed between  |
+# | any two people. For a certain box, the row name     |
+# | owes the column name the amount. If the box is red, |
+# | then it's reversed. :3                              |
+# |                                                     |
+# | The Occasions page has 7 columns: Occasion, Date,   |
+# | the name of who paid, and four columns for whatever |
+# | anybody else owes that person for that occasion.    |
+# | E.g., if we went out for ice cream and Jacob picked |
+# | up the check just out of ease, and say maybe Lucas  |
+# | and I got $5 milkshakes and William didn't get      |
+# | anything, the record would look like:               |
+# |                                                     |
+# | Occasion    Date   WhoPaid Tara Lucas William Jacob |
+# | --------------------------------------------------- |
+# | Ice Cream / Jan 9 / Jacob /  5 /  5  /       /    / |
+# |                                                     |
+# | Regardless of how much Jacob spent on his ice cream |
+# | his $$$ isn't put into the spreadsheet because he   |
+# | doesn't owe himself anything...                     |
+# |                                                     |
+# | Each debt page has 5 columns: three for the names   |
+# | of all the possible people that person could owe,   |
+# | an Occasion column, and a Date column. Building off |
+# | the example above, both Lucas's and my debt sheets  |
+# | would look like:                                    |
+# |                                                     |
+# | (LUCAS)                                             |
+# | Jacob   Tara    William   Occasion    Date          |
+# | --------------------------------------------------- |
+# |   5   /       /         / Ice Cream / Jan 9 /       |
+# |                                                     |
+# | (TARA)                                              |
+# | Jacob   Lucas    William   Occasion    Date         |
+# | --------------------------------------------------- |
+# |   5   /       /         / Ice Cream / Jan 9 /       |
+# |                                                     |
+# | because we both owe Jacob for that instance. In     |
+# | each debt page record, there will only be a number  |
+# | in one of the three columns with names. There's no  |
+# | reason you'd owe both William and Jacob, say, for   |
+# | a certain occasion.                                 |
+# +-----------------------------------------------------+ 
+
 import json
 import gspread
 from oauth2client.client import SignedJwtAssertionCredentials
 
-# --- FUNCTIONS ---------------------------------------------
-
-# getWhoPaidColumn(list, whoPaid). Returns the column number that
-# matches the name of whoPaid.
-
-def getWhoPaidColumn(listOfNames, string):
-    for i in range(len(listOfNames)):
-        if string == listOfNames[i]:
-            return i
-    return 6
-
-# occasionInNameSheet(name, occasion, date). True if
-# occasion and date are found in a single row
-# on any <name>Sheet.
-
-def occasionInNameSheet(name, occasion, date):
-
-    nameSheet = wholeBook.worksheet(name)
-    
-    # get all the dates for nameSheet
-
-    dateColumn = nameSheet.col_values(5)
-
-    # if any of the dates match the date of this occasion,
-    # then check the occasion of that date. if the
-    # occasion matches too, then return false. (this
-    # way, we don't have to open up every row :D we just
-    # have to open up one column and one row. #timesaver)
-    
-    for i in range(nameSheet.row_count - 2):
-        if dateColumn[nameSheet.row_count - i - 1] == date:
-            currentRow = nameSheet.row_values(nameSheet.row_count - i)
-            if currentRow[3] == occasion:
-                print("date(" + date + ") and occasion(" + occasion + ") match row " + str(i) + " of " + name + "'s sheet")
-                return True
-    print("date(" + date + ") and occasion(" + occasion + ") don't match " + name + "'s sheet.")
-    return False
-
-# isNewRow(list). True if the row wasn't already added to the
-# <name>Sheets <3
-
-def isNewRow(occasionData):
-
-    occasion    = occasionData[0]
-    date        = occasionData[1]
-    whoPaid     = occasionData[2]
-    
-    if len(occasionData) >= 4:
-        jacobOwes   = occasionData[3]
-    else:
-        jacobOwes = 0
-        
-    if len(occasionData) >= 5:
-        lucasOwes = occasionData[4]
-    else:
-        lucasOwes = 0
-        
-    if len(occasionData) >= 6:
-        williamOwes = occasionData[5]
-    else:
-        williamOwes = 0
-    
-    if len(occasionData) == 7:
-        taraOwes = occasionData[6]
-    else:
-        taraOwes = 0
-
-    # only check the <name>Sheets of people who owed something :/
-
-    if float(jacobOwes) > 0:
-        if occasionInNameSheet("Jacob", occasion, date):
-            return False
-
-    if float(lucasOwes) > 0:
-        if occasionInNameSheet("Lucas", occasion, date):
-            return False
-
-    if float(williamOwes) > 0:
-        if occasionInNameSheet("William", occasion, date):
-            return False
-
-    if float(taraOwes) > 0:
-        if occasionInNameSheet("Tara", occasion, date):
-            return False
-                
-    # if we get all the way to here without returning,
-    # the row must be new! :D
-    
-    return True
-
-# editNameSheet(name, nameOwes, occasion, date). Edits <name>'s <name>Sheet
-# by putting in the occasion, date, and whatever <name> owes.
-
-def editNameSheet(name, nameOwes, occasion, date, whoPaid):
-    
-    nameSheet  = wholeBook.worksheet(name)
-    whoPaidCol = getWhoPaidColumn(nameSheet.row_values(2), whoPaid)
-    
-    nameSheet.insert_row(["0","0","0",occasion,date], nameSheet.row_count + 1)
-    nameSheet.update_cell(nameSheet.row_count, whoPaidCol + 1, nameOwes)
-
-    print(name + "'s sheet successfully edited.")
-
-# addRow(list). Adds the row to the <name>Sheets
-
-def addRow(occasionData):
-
-    occasion    = occasionData[0]
-    date        = occasionData[1]
-    whoPaid     = occasionData[2]
-    
-    if len(occasionData) >= 4:
-        jacobOwes   = occasionData[3]
-    else:
-        jacobOwes = 0
-        
-    if len(occasionData) >= 5:
-        lucasOwes = occasionData[4]
-    else:
-        lucasOwes = 0
-        
-    if len(occasionData) >= 6:
-        williamOwes = occasionData[5]
-    else:
-        williamOwes = 0
-    
-    if len(occasionData) == 7:
-        taraOwes = occasionData[6]
-    else:
-        taraOwes = 0
-    
-    # now we add the occasion to the pages of whoever owes stuff. basically
-    # if <name>Owes > 0, then we add something to <name>Sheet's
-    # last row, in the column that matches whoPaid.
-    
-    if float(jacobOwes) > 0:
-        editNameSheet("Jacob", jacobOwes, occasion, date, whoPaid)
-        
-    if float(lucasOwes) > 0:
-        editNameSheet("Lucas", lucasOwes, occasion, date, whoPaid)       
-        
-    if float(williamOwes) > 0:
-        editNameSheet("William", williamOwes, occasion, date, whoPaid)
-        
-    if float(taraOwes) > 0:
-        editNameSheet("Tara", taraOwes, occasion, date, whoPaid)
-        
-# --- MAIN --------------------------------------------------
+# +-----------------------------------------------------+
+# | ====================== MAIN ======================= |
+# |                                                     |
+# | Gives the user two options:                         |
+# |                                                     |
+# | (1) Using the command line, add an occasion to the  |
+# |     spreadsheet by typing in your answer for each   |
+# |     field. Fields include occasion, the name of who |
+# |     paid (any case), and how much everybody owes.   |
+# |                                                     |
+# | (2) Look through the records (starting from the one |
+# |     at the bottom of the spreadsheet, since it was  |
+# |     probably entered most recently), and check if   |
+# |     the occasion and date are found in anybody's    |
+# |     debt page. (The Total page is only correct if   |
+# |     all of the occasion records are in their appro- |
+# |     priate debt pages.) If the pair is found in     |
+# |     one, then it is in everybody's.                 |
+# |                                                     |
+# |     If the record isn't found in the debt pages,    |
+# |     add it in.
+# |                                                     |
+# |     If we find a record that's already in the debt  |
+# |     pages (i.e. finished), then we stop because     |
+# |     that means that all records are in the debt     |
+# |     pages. (Assuming that once we find a finished   |
+# |     record, all the ones before that one are        |
+# |     finished as well.)                              |
+# |                                                     |
+# | Extra options:                                      |
+# |                                                     |
+# | (3) Go through all the records and make sure the    |
+# |     debts have been added to everybody's debt page. |
+# |     This is the same as (2), but we don't assume    |
+# |     that once we find a finished record, all the    |
+# |     records before it are finished too.             |
+# +-----------------------------------------------------+
 
 # variables
 
@@ -190,18 +136,6 @@ jacobSheet       = wholeBook.worksheet("Jacob")
 lucasSheet       = wholeBook.worksheet("Lucas")
 williamSheet     = wholeBook.worksheet("William")
 taraSheet        = wholeBook.worksheet("Tara")
-
-# so basically this program is supposed to either:
-# 
-# (A) take in user input for the occasion
-#     and put it into the spreadsheet (so the
-#     user doesn't have to open their browser), or
-#
-# (B) check the last few rows of the occasionSheet
-#     to see if there are any new occasions that
-#     someone else added! if there are any, add
-#     them to the other <name>Sheets and update
-#     totalsSheet <3
 
 # ask user which task they want the program to do
 
@@ -300,28 +234,168 @@ else:
             addRow(currentRow)
 
         else:
-            print("no more new rows!")
-            break
+            if choice == "2":
+                print("no more new rows!")
+                break
+            else:
+                print("not a new row, but we're gonna keep on trucking")
 
+# +-----------------------------------------------------+
+# | =================== FUNCTIONS ===================== |
+# |                                                     |
+# | This is the last section, so I guess all the        |
+# | function descriptions will be right above the func- |
+# | tions themselves. I just wanted a block so you (I?) |
+# | can tell that the main function ended. :)           |
+# +-----------------------------------------------------+
 
+# ---------------------------------------------------------------
+# getWhoPaidColumn(list, whoPaid). Returns the column number that
+# matches the name of whoPaid.
 
+def getWhoPaidColumn(listOfNames, string):
+    for i in range(len(listOfNames)):
+        if string == listOfNames[i]:
+            return i
+    return 6
 
+# ---------------------------------------------------------------
+# occasionInNameSheet(name, occasion, date). True if
+# occasion and date are found in a single row
+# on any <name>Sheet.
 
+def occasionInNameSheet(name, occasion, date):
 
+    nameSheet = wholeBook.worksheet(name)
+    
+    # get all the dates for nameSheet
 
+    dateColumn = nameSheet.col_values(5)
 
+    # if any of the dates match the date of this occasion,
+    # then check the occasion of that date. if the
+    # occasion matches too, then return false. (this
+    # way, we don't have to open up every row :D we just
+    # have to open up one column and one row. #timesaver)
+    
+    for i in range(nameSheet.row_count - 2):
+        if dateColumn[nameSheet.row_count - i - 1] == date:
+            currentRow = nameSheet.row_values(nameSheet.row_count - i)
+            if currentRow[3] == occasion:
+                print("date(" + date + ") and occasion(" + occasion + ") match row " + str(i) + " of " + name + "'s sheet")
+                return True
+    print("date(" + date + ") and occasion(" + occasion + ") don't match " + name + "'s sheet.")
+    return False
 
+# ---------------------------------------------------------------
+# isNewRow(list). True if the row wasn't already added to the
+# <name>Sheets <3
 
+def isNewRow(occasionData):
 
+    occasion    = occasionData[0]
+    date        = occasionData[1]
+    whoPaid     = occasionData[2]
+    
+    if len(occasionData) >= 4:
+        jacobOwes   = occasionData[3]
+    else:
+        jacobOwes = 0
+        
+    if len(occasionData) >= 5:
+        lucasOwes = occasionData[4]
+    else:
+        lucasOwes = 0
+        
+    if len(occasionData) >= 6:
+        williamOwes = occasionData[5]
+    else:
+        williamOwes = 0
+    
+    if len(occasionData) == 7:
+        taraOwes = occasionData[6]
+    else:
+        taraOwes = 0
 
+    # only check the <name>Sheets of people who owed something :/
 
+    if float(jacobOwes) > 0:
+        if occasionInNameSheet("Jacob", occasion, date):
+            return False
 
+    if float(lucasOwes) > 0:
+        if occasionInNameSheet("Lucas", occasion, date):
+            return False
 
+    if float(williamOwes) > 0:
+        if occasionInNameSheet("William", occasion, date):
+            return False
 
+    if float(taraOwes) > 0:
+        if occasionInNameSheet("Tara", occasion, date):
+            return False
+                
+    # if we get all the way to here without returning,
+    # the row must be new! :D
+    
+    return True
 
+# ---------------------------------------------------------------
+# editNameSheet(name, nameOwes, occasion, date). Edits <name>'s <name>Sheet
+# by putting in the occasion, date, and whatever <name> owes.
 
+def editNameSheet(name, nameOwes, occasion, date, whoPaid):
+    
+    nameSheet  = wholeBook.worksheet(name)
+    whoPaidCol = getWhoPaidColumn(nameSheet.row_values(2), whoPaid)
+    
+    nameSheet.insert_row(["0","0","0",occasion,date], nameSheet.row_count + 1)
+    nameSheet.update_cell(nameSheet.row_count, whoPaidCol + 1, nameOwes)
 
+    print(name + "'s sheet successfully edited.")
 
+# ---------------------------------------------------------------
+# addRow(list). Adds the row to the <name>Sheets
 
+def addRow(occasionData):
 
-
+    occasion    = occasionData[0]
+    date        = occasionData[1]
+    whoPaid     = occasionData[2]
+    
+    if len(occasionData) >= 4:
+        jacobOwes   = occasionData[3]
+    else:
+        jacobOwes = 0
+        
+    if len(occasionData) >= 5:
+        lucasOwes = occasionData[4]
+    else:
+        lucasOwes = 0
+        
+    if len(occasionData) >= 6:
+        williamOwes = occasionData[5]
+    else:
+        williamOwes = 0
+    
+    if len(occasionData) == 7:
+        taraOwes = occasionData[6]
+    else:
+        taraOwes = 0
+    
+    # now we add the occasion to the pages of whoever owes stuff. basically
+    # if <name>Owes > 0, then we add something to <name>Sheet's
+    # last row, in the column that matches whoPaid.
+    
+    if float(jacobOwes) > 0:
+        editNameSheet("Jacob", jacobOwes, occasion, date, whoPaid)
+        
+    if float(lucasOwes) > 0:
+        editNameSheet("Lucas", lucasOwes, occasion, date, whoPaid)       
+        
+    if float(williamOwes) > 0:
+        editNameSheet("William", williamOwes, occasion, date, whoPaid)
+        
+    if float(taraOwes) > 0:
+        editNameSheet("Tara", taraOwes, occasion, date, whoPaid)
+        
